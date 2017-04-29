@@ -54,6 +54,44 @@
 )
 
 
+(defun lst-iterate (lst)
+  (let 
+    (
+      (curval nil)
+    )
+  )
+
+  (lambda ()
+    (setf curval (car lst))
+    ; (setf lst (cdr lst))
+    curval
+  )
+)
+
+
+(defun str-repeat (str times)
+  (let
+    (
+      (res "")
+    )
+
+    (defun str-repeat-closure ()
+      (cond
+        ((> times 0)
+          (setf res (concatenate 'string res str))
+          (setf times (1- times))
+          (str-repeat-closure)
+        )
+
+        (t res)
+      )
+    )
+
+    (str-repeat-closure)
+  )
+)
+
+
 (defun str-compress (str)
   (let
     (
@@ -103,18 +141,77 @@
   )
 )
 
-;; tests
-(setq next-char (str-iterate "test"))
 
-(print (funcall next-char))     ; => "t"
-(print (funcall next-char))     ; => "e"
-(print (funcall next-char))     ; => "s"
-(print (funcall next-char))     ; => "t"
-(print (funcall next-char))     ; => NIL
-(print (funcall next-char))     ; => NIL
+(defun str-decompress (lst)
+  (let
+    (
+      (decompressed "")
+    )
+
+    (defun str-decompress-closure ()
+      (cond
+        ((null lst)
+          decompressed
+        )
+
+        (t
+          (let
+            (
+              (curpair (car lst))
+            )
+
+            (setf
+              decompressed
+
+              (concatenate 'string
+                decompressed
+
+                (str-repeat
+                  (car curpair)
+                  (cdr curpair)
+                )
+              )
+            )
+
+            (setf lst (cdr lst))
+
+            (str-decompress-closure)
+          )
+        )
+      )
+    )
+
+    (str-decompress-closure)
+  )
+)
+
+
+;; tests
+(setq next (str-iterate "test"))
+
+(print (funcall next))      ; => "t"
+(print (funcall next))      ; => "e"
+(print (funcall next))      ; => "s"
+(print (funcall next))      ; => "t"
+(print (funcall next))      ; => NIL
+(print (funcall next))      ; => NIL
+
+
+(setq next (lst-iterate '(1 2 3 4 5)))
+
+(print (funcall next))      ; => 1
+(print (funcall next))      ; => 2
+(print (funcall next))      ; => 3
+(print (funcall next))      ; => 4
+(print (funcall next))      ; => 5
+(print (funcall next))      ; => NIL
+
 
 (print (str-is-empty? "test"))  ; => NIL
 (print (str-is-empty? ""))      ; => T
 
 (print (str-compress "aaabbbbccccc"))   ; => (("a" . 3) ("b" . 4) ("c" . 5))
 (print (str-compress ""))               ; => NIL
+
+(print (str-decompress '(("a" . 3) ("b" . 4) ("c" . 5))))   ; => "aaabbbbccccc"
+(print (str-decompress nil))            ; => ""
