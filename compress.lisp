@@ -63,7 +63,7 @@
 
   (lambda ()
     (setf curval (car lst))
-    ; (setf lst (cdr lst))
+    (setf lst (cdr lst))
     curval
   )
 )
