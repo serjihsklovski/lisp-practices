@@ -98,46 +98,38 @@
       (compressed nil)
       (curch (str-get-head str))
       (str-tail (str-get-tail str))
+      (amount 1)
     )
 
-    (defun str-compress-closure-1 ()
+    (defun str-compress-closure ()
       (let
         (
-          (amount 1)
+          (nextch (str-get-head str-tail))
         )
 
-        (defun str-compress-closure-2 ()
-          (let
-            (
-              (nextch (str-get-head str-tail))
-            )
+        (setf str-tail (str-get-tail str-tail))
 
-            (setf str-tail (str-get-tail str-tail))
+        (cond
+          ((null curch)
+            compressed
+          )
 
-            (cond
-              ((null curch)
-                compressed
-              )
+          ((string= nextch curch)
+            (setf amount (1+ amount))
+            (str-compress-closure)
+          )
 
-              ((string= nextch curch)
-                (setf amount (1+ amount))
-                (str-compress-closure-2)
-              )
-
-              (t
-                (setf compressed (append compressed (cons (cons curch amount) nil)))  ; adding dotted pair: (string . number)
-                (setf curch nextch)
-                (str-compress-closure-1)
-              )
-            )
+          (t
+            (setf compressed (append compressed (cons (cons curch amount) nil)))  ; adding dotted pair: (string . number)
+            (setf curch nextch)
+            (setf amount 1)
+            (str-compress-closure)
           )
         )
-
-        (str-compress-closure-2)
       )
     )
 
-    (str-compress-closure-1)
+    (str-compress-closure)
   )
 )
 
