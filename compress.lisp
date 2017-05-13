@@ -54,21 +54,6 @@
 )
 
 
-(defun lst-iterate (lst)
-  (let 
-    (
-      (curval nil)
-    )
-  )
-
-  (lambda ()
-    (setf curval (car lst))
-    (setf lst (cdr lst))
-    curval
-  )
-)
-
-
 (defun str-repeat (str times)
   (let
     (
@@ -179,31 +164,41 @@
 
 
 ;; tests
-(setq next (str-iterate "test"))
 
-(print (funcall next))      ; => "t"
-(print (funcall next))      ; => "e"
-(print (funcall next))      ; => "s"
-(print (funcall next))      ; => "t"
-(print (funcall next))      ; => NIL
-(print (funcall next))      ; => NIL
+(format t "1. String-Iterator~%~%")
+
+(let
+  (
+    (next (str-iterate "test"))
+  )
+
+  (format t "  str = \"test\"~%")
+  (format t "  str.next() => ~A~%" (funcall next))
+  (format t "  str.next() => ~A~%" (funcall next))
+  (format t "  str.next() => ~A~%" (funcall next))
+  (format t "  str.next() => ~A~%" (funcall next))
+  (format t "  str.next() => ~A~%~%" (funcall next))
+)
+
+(let
+  (
+    (test-str-src "aaabbbbccccc")
+    (test-lst-compressed nil)
+    (test-str-decompressed nil)
+  )
+
+  (format t "2. Compress string~%~%")
+
+  (format t "  str = \"~A\"~%" test-str-src)
+
+  (setf test-lst-compressed (str-compress test-str-src))
+
+  (format t "  compressed = ~A~%~%" test-lst-compressed)
 
 
-(setq next (lst-iterate '(1 2 3 4 5)))
+  (format t "3. Decompress string~%~%")
 
-(print (funcall next))      ; => 1
-(print (funcall next))      ; => 2
-(print (funcall next))      ; => 3
-(print (funcall next))      ; => 4
-(print (funcall next))      ; => 5
-(print (funcall next))      ; => NIL
+  (setf test-str-decompressed (str-decompress test-lst-compressed))
 
-
-(print (str-is-empty? "test"))  ; => NIL
-(print (str-is-empty? ""))      ; => T
-
-(print (str-compress "aaabbbbccccc"))   ; => (("a" . 3) ("b" . 4) ("c" . 5))
-(print (str-compress ""))               ; => NIL
-
-(print (str-decompress '(("a" . 3) ("b" . 4) ("c" . 5))))   ; => "aaabbbbccccc"
-(print (str-decompress nil))            ; => ""
+  (format t "  decompressed = \"~A\"~%~%" test-str-decompressed)
+)
